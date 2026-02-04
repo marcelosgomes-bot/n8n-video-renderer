@@ -12,10 +12,15 @@ def render():
     image.save("image.jpg")
     
     # Comando FFmpeg para unir imagem e áudio
+    # Comando FFmpeg OTIMIZADO para planos de 512MB
     cmd = [
         'ffmpeg', '-y', '-loop', '1', '-i', 'image.jpg', 
-        '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', 
-        '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', 
+        '-i', 'audio.mp3', 
+        '-vf', 'scale=1280:-2,format=yuv420p', # Reduz para 720p (mais leve)
+        '-c:v', 'libx264', 
+        '-preset', 'ultrafast', # Usa menos RAM e CPU no processamento
+        '-tune', 'stillimage', 
+        '-c:a', 'aac', '-b:a', '128k', 
         '-shortest', 'video.mp4'
     ]
     subprocess.run(cmd, check=True)
